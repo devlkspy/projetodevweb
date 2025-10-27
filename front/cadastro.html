@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Novo Aluno</title>
+    <link rel="stylesheet" href="cabecalho.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="cadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+    
+    <header id="header-placeholder"></header>
+
+    <main>
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Área de cadastro</h2>
+                <p>Preencha os dados abaixo para registrar um aluno/administrador no sistema.</p>
+            </div>
+            <form class="registration-form" id="cadastro-form">
+                <div class="form-group">
+                    <label for="fullName">Nome Completo</label>
+                    <input type="text" id="fullName" placeholder="Digite o nome completo do aluno" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Usuário</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="role-aluno" name="role" value="aluno" checked>
+                            <label for="role-aluno">Aluno</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="role-admin" name="role" value="admin">
+                            <label for="role-admin">Administrador</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthDate">Data de Nascimento</label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" placeholder="000.000.000-00" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="generatedPassword">Senha Padrão (Primeiro Acesso)</label>
+                    <div class="matricula-field-container">
+                        <input type="text" id="generatedPassword" placeholder="Preencha o CPF e clique em Gerar..." readonly required>
+                        <button type="button" id="generatePasswordBtn" class="btn-secondary">Gerar Senha</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="exemplo@email.com" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Telefone</label>
+                        <input type="tel" id="phone" placeholder="(00) 00000-0000" required>
+                    </div>
+                </div>
+
+                
+                
+                <div id="student-fields"> 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="shift">Turno</label>
+                            <select id="shift" required>
+                                <option value="" disabled selected>Selecione um turno</option>
+                                <option value="manha">Manhã</option>
+                                <option value="tarde">Tarde</option>
+                                <option value="noite">Noite</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="matricula">Matrícula</label>
+                            <input type="text" id="matricula" placeholder="Digite a matrícula" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label>Modalidade</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="presencial" name="modality" value="presencial" checked>
+                            <label for="presencial">Presencial</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ead" name="modality" value="ead">
+                            <label for="ead">EAD</label>
+                        </div>
+                    </div>
+                </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course">Curso</label>
+                            <select id="course" required>
+                                <option value="" disabled selected>Selecione um curso</option>
+                                <option value="ads">Análise e Desenvolvimento de Sistemas</option>
+                                <option value="computacao">Ciências da Computação</option>
+                                <option value="engenharia">Engenharia de Software</option>
+                                <option value="redes">Redes de Computadores</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Cadastrar</button>
+                    <button type="reset" class="btn-secondary">Limpar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM completamente carregado e analisado');
+
+        const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+        const cpfField = document.getElementById('cpf');
+        const passwordField = document.getElementById('generatedPassword');
+        const cadastroForm = document.getElementById('cadastro-form');
+        const userTypeRadios = document.querySelectorAll('input[name="role"]');
+        const studentFieldsDiv = document.getElementById('student-fields');
+
+        console.log('Tentando encontrar elementos...');
+        console.log('Botão Gerar Senha:', generatePasswordBtn);
+        console.log('Formulário de Cadastro:', cadastroForm);
+        console.log('Campos de Aluno:', studentFieldsDiv);
+
+
+        if (generatePasswordBtn && cpfField && passwordField) {
+            generatePasswordBtn.addEventListener('click', function() {
+                console.log('Botão Gerar Senha clicado!');
+                const cpfValue = cpfField.value.replace(/\D/g, '');
+
+                if (cpfValue.length < 6) {
+                    alert('Por favor, preencha o CPF primeiro (pelo menos 6 dígitos).');
+                    cpfField.focus();
+                    return;
+                }
+                
+                const anoAtual = new Date().getFullYear();
+                const parteDoCpf = cpfValue.substring(0, 6);
+                const senhaGerada = `${anoAtual}${parteDoCpf}`;
+                
+                passwordField.value = senhaGerada;
+            });
+        } else {
+             console.error('Erro: Elementos para gerar senha não encontrados!');
+        }
+
+
+        if (cadastroForm) {
+            cadastroForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                console.log('Evento submit do formulário disparado!');
+
+                const nomeInput = document.getElementById('fullName'); // Pega o campo nome
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('generatedPassword');
+                const roleInput = document.querySelector('input[name="role"]:checked');
+
+                if (!nomeInput || !emailInput || !passwordInput || !roleInput) {
+                    console.error('Erro: Não foi possível encontrar os campos nome, email, senha ou role.');
+                    alert('Erro interno ao encontrar campos do formulário.');
+                    return;
+                }
+
+                const nome = nomeInput.value; // Pega o valor do nome
+                const email = emailInput.value;
+                const senha = passwordInput.value;
+                const role = roleInput.value;
+
+                 if (!senha) {
+                    alert('Por favor, gere uma senha padrão antes de cadastrar.');
+                    return;
+                 }
+
+
+                const dados = {
+                    nome: nome, // Inclui o nome nos dados enviados
+                    email: email,
+                    senha: senha,
+                    role: role
+                };
+                console.log('Enviando dados para o backend:', dados);
+
+                try {
+                    const response = await fetch('http://localhost:3000/cadastrar', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dados)
+                    });
+
+                    const resultado = await response.json();
+                    console.log('Resposta do backend:', resultado);
+                    alert(resultado.mensagem);
+
+                    if (response.status === 201) {
+                        cadastroForm.reset();
+                    }
+
+                } catch (error) {
+                     console.error('Erro na requisição fetch:', error);
+                    alert('Ocorreu um erro ao conectar ao servidor.');
+                }
+            });
+        } else {
+             console.error('Erro: Formulário com id="cadastro-form" não encontrado!');
+        }
+
+
+        function toggleStudentFields() {
+             console.log('Alternando visibilidade dos campos de aluno');
+             const isAdminChecked = document.getElementById('role-admin').checked;
+            
+            if (studentFieldsDiv) {
+                if (isAdminChecked) {
+                    studentFieldsDiv.style.display = 'none';
+                    const fieldsToDisable = studentFieldsDiv.querySelectorAll('input, select');
+                    fieldsToDisable.forEach(field => field.disabled = true);
+                } else {
+                    studentFieldsDiv.style.display = 'block';
+                    const fieldsToEnable = studentFieldsDiv.querySelectorAll('input, select');
+                    fieldsToEnable.forEach(field => field.disabled = false);
+                }
+            }
+        }
+
+        if (userTypeRadios.length > 0 && studentFieldsDiv) {
+             console.log('Adicionando ouvintes aos botões de tipo de usuário');
+            userTypeRadios.forEach(radio => {
+                radio.addEventListener('change', toggleStudentFields);
+            });
+            toggleStudentFields();
+        } else {
+             console.warn('Aviso: Elementos para esconder/mostrar campos de aluno não encontrados.');
+        }
+    });
+</script>
+    
+</body>
+</html>

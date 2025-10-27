@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <nav>
+            
+        </nav>
+    </header>
+
+    <main>
+        <div class="login-container">
+            <h2>Acessar Sistema</h2>
+    <form id="login-form">
+    <input type="email" placeholder="Email" id="email-input">
+
+<div class="password-container">
+    <input type="password" placeholder="Senha" id="password-input">
+    <i class="fa-solid fa-eye" id="toggle-password"></i>
+</div>
+
+<button type="submit">Entrar</button>
+</form>
+            <p>
+                Esqueceu a senha? <a href="esqueceu.html">Clique aqui</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Todos os direitos reservados.</p>
+    </footer>
+</body>
+<script>
+    const togglePassword = document.querySelector('#toggle-password');
+    const passwordInput = document.querySelector('#password-input');
+    const loginForm = document.getElementById('login-form');
+
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            if (type === 'password') {
+                togglePassword.className = 'fa-solid fa-eye';
+            } else {
+                togglePassword.className = 'fa-solid fa-eye-slash';
+            }
+        });
+    } else {
+        console.error('Elementos para toggle da senha não encontrados!');
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            console.log('Tentativa de login iniciada...');
+
+            const emailInput = document.getElementById('email-input');
+            const currentPasswordInput = document.getElementById('password-input');
+
+            if (!emailInput || !currentPasswordInput) {
+                console.error('Campos de email ou senha não encontrados!');
+                alert('Erro interno: Campos do formulário não encontrados.');
+                return;
+            }
+
+            const email = emailInput.value;
+            const senha = currentPasswordInput.value;
+            
+            const dados = { email: email, senha: senha };
+            console.log('Enviando dados de login:', dados);
+
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await response.json();
+                console.log('Dados recebidos do backend no login:', resultado);
+                console.log('Resultado JSON do servidor:', resultado);
+
+                if (response.ok && resultado.status === 'sucesso') {
+                    localStorage.setItem('nomeUsuario', resultado.nomeUsuario);
+                    localStorage.setItem('emailUsuario', resultado.emailUsuario);
+                    localStorage.setItem('dataCadastroUsuario', resultado.dataCadastroUsuario);
+                    
+                    alert(resultado.mensagem);
+                    window.location.href = 'perfil.html';
+                } else {
+                    alert(`Erro no login: ${resultado.mensagem}`);
+                }
+
+            } catch (error) {
+                console.error('Erro na requisição fetch:', error);
+                alert('Ocorreu um erro ao tentar conectar ao servidor.');
+            }
+        });
+    } else {
+        console.error('Formulário com id="login-form" não encontrado!');
+    }
+</script>
+</html>

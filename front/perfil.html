@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil</title>
+    <link rel="stylesheet" href="perfil.css">
+    <link rel="stylesheet" href="cabecalho.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+    
+    <header id="header-placeholder"></header>
+
+    <main>
+        <div class="profile-container">
+            <div class="profile-header">
+    <div class="profile-picture-container">
+        <img src="https://placehold.co/150x150" alt="Foto de Perfil" class="profile-picture" id="profileImage">
+        <label for="fileUpload" class="edit-photo-label hidden">
+            <i class="fa-solid fa-camera"></i>
+        </label>
+    </div>
+    <input type="file" id="fileUpload" accept="image/*" class="hidden">
+
+    <h2 class="profile-name" id="displayName">Nome do Professor</h2>
+    </div>
+            <div class="profile-details">
+                <h3>Detalhes do Perfil</h3>
+                <p><strong>Email:</strong> <span id="displayEmail">professor.diretor@email.com</span></p>
+                <p><strong>Departamento:</strong> Análise e Desenvolvimento de Sistemas</p>
+                <p><strong>Desde:</strong> <span id="displayDesde">2015</span></p>
+            </div>
+            <div class="profile-actions">
+                <button class="btn-primary" id="editButton">Editar Perfil</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+    const editButton = document.querySelector('#editButton');
+    const displayName = document.querySelector('#displayName');
+    const profileImage = document.querySelector('#profileImage');
+    const fileUpload = document.querySelector('#fileUpload');
+    const editPhotoLabel = document.querySelector('.edit-photo-label');
+    const profileContainer = document.querySelector('.profile-container');
+
+    let isEditing = false;
+    let inputElement = null;
+    let originalImageSrc = profileImage.src;
+
+    editButton.addEventListener('click', function() {
+        if (isEditing === false) {
+            profileContainer.classList.add('edit-mode-active');
+            const nomeAtual = displayName.textContent;
+            
+            inputElement = document.createElement('input');
+            inputElement.type = 'text';
+            inputElement.value = nomeAtual;
+            inputElement.className = 'edit-input-name';
+
+            displayName.style.display = 'none';
+            displayName.parentNode.insertBefore(inputElement, displayName.nextSibling);
+            inputElement.focus();
+            
+            editButton.textContent = 'Salvar';
+            isEditing = true;
+        } else {
+            profileContainer.classList.remove('edit-mode-active');
+            const novoNome = inputElement.value;
+
+            if (novoNome.trim() !== "") {
+                displayName.textContent = novoNome;
+            }
+
+            displayName.style.display = 'block';
+            inputElement.remove();
+            
+            editButton.textContent = 'Editar Perfil';
+            isEditing = false;
+            originalImageSrc = profileImage.src;
+        }
+    });
+
+    fileUpload.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileImage.src = e.target.result;
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    fetch('cabecalho.html')
+.then(response => response.text())
+.then(data => {
+    const placeholder = document.getElementById('header-placeholder');
+    if (placeholder) {
+        placeholder.innerHTML = data;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+        const nomeCompleto = localStorage.getItem('nomeUsuario');
+        const email = localStorage.getItem('emailUsuario');
+        const dataCadastroStr = localStorage.getItem('dataCadastroUsuario');
+
+        const displayNameElement = document.getElementById('displayName');
+        const displayEmailElement = document.getElementById('displayEmail');
+        const displayDesdeElement = document.getElementById('displayDesde');
+
+        if (nomeCompleto && displayNameElement) {
+            const nomes = nomeCompleto.split(' ');
+            const doisPrimeirosNomes = nomes.slice(0, 2).join(' ');
+            displayNameElement.textContent = doisPrimeirosNomes;
+        }
+
+        if (email && displayEmailElement) {
+            displayEmailElement.textContent = email;
+        }
+
+        if (dataCadastroStr && displayDesdeElement) {
+            try {
+                const dataCadastro = new Date(dataCadastroStr);
+                const anoCadastro = dataCadastro.getFullYear();
+                if (!isNaN(anoCadastro)) {
+                    displayDesdeElement.textContent = anoCadastro;
+                } else {
+                     displayDesdeElement.textContent = 'N/A';
+                }
+            } catch (e) {
+                console.error('Erro ao processar data de cadastro:', e);
+                displayDesdeElement.textContent = 'N/A';
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

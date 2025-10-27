@@ -1,0 +1,153 @@
+.form-container {
+    max-width: 600px;
+    max-height: 550px;
+    margin: 40px auto;
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    
+
+}
+
+.form-header {
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+.form-header h2 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.form-header p {
+    margin: 5px 0 0;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.registration-form {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+    font-family: 'Nunito', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3062ce;
+    box-shadow: 0 0 5px rgba(48, 98, 206, 0.4);
+}
+
+.form-actions {
+    text-align: right;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #3062ce;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #4a5766;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #ccc;
+    margin-left: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: #e2e6ea;
+}
+
+.matricula-field-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#generateMatriculaBtn {
+    padding: 10px 15px;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radio-option label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+input[type="radio"] {
+    width: auto;
+}
+
+#generatePasswordBtn {
+    padding: 10px 15px;
+    font-size: 14px;
+    flex-shrink: 0;
+}
