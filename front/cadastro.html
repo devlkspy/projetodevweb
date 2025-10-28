@@ -254,6 +254,11 @@
              console.warn('Aviso: Elementos para esconder/mostrar campos de aluno não encontrados.');
         }
     });
+    const userRole = localStorage.getItem('roleUsuario');
+        if (userRole === 'aluno') {
+            alert('Acesso negado. Alunos não podem cadastrar novos usuários.');
+            window.location.href = 'perfil.html';
+        }
 </script>
     
 </body>
