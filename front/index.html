@@ -8,25 +8,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 </head>
 <body>
-    <header>
-        <nav>
-            
-        </nav>
-    </header>
+    <header id="header-placeholder"></header>
 
     <main>
         <div class="login-container">
             <h2>Acessar Sistema</h2>
-    <form id="login-form">
-    <input type="email" placeholder="Email" id="email-input">
-
-<div class="password-container">
-    <input type="password" placeholder="Senha" id="password-input">
-    <i class="fa-solid fa-eye" id="toggle-password"></i>
-</div>
-
-<button type="submit">Entrar</button>
-</form>
+            <form id="login-form">
+                <input type="email" placeholder="Email" id="email-input">
+                <div class="password-container">
+                    <input type="password" placeholder="Senha" id="password-input">
+                    <i class="fa-solid fa-eye" id="toggle-password"></i>
+                </div>
+                <button type="submit">Entrar</button>
+            </form>
             <p>
                 Esqueceu a senha? <a href="esqueceu.html">Clique aqui</a>
             </p>
@@ -37,6 +31,7 @@
         <p>&copy; 2025 - Todos os direitos reservados.</p>
     </footer>
 </body>
+<script src="script.js"></script>
 <script>
     const togglePassword = document.querySelector('#toggle-password');
     const passwordInput = document.querySelector('#password-input');
@@ -92,6 +87,7 @@
                     localStorage.setItem('nomeUsuario', resultado.nomeUsuario);
                     localStorage.setItem('emailUsuario', resultado.emailUsuario);
                     localStorage.setItem('dataCadastroUsuario', resultado.dataCadastroUsuario);
+                    localStorage.setItem('roleUsuario', resultado.roleUsuario);
                     
                     alert(resultado.mensagem);
                     window.location.href = 'perfil.html';

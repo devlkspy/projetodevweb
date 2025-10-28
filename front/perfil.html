@@ -105,23 +105,25 @@
             const nomeCompleto = localStorage.getItem('nomeUsuario');
             const email = localStorage.getItem('emailUsuario');
             const dataCadastroStr = localStorage.getItem('dataCadastroUsuario');
+            const userRole = localStorage.getItem('roleUsuario');
 
             const displayNameElement = document.getElementById('displayName');
             const displayEmailElement = document.getElementById('displayEmail');
             const displayDesdeElement = document.getElementById('displayDesde');
+            const editButtonElement = document.getElementById('editButton');
 
             if (nomeCompleto && displayNameElement) {
                 const nomes = nomeCompleto.split(' ');
                 const doisPrimeirosNomes = nomes.slice(0, 2).join(' ');
                 displayNameElement.textContent = doisPrimeirosNomes;
             } else if (displayNameElement) {
-                 displayNameElement.textContent = 'Usuário'; 
+                 displayNameElement.textContent = 'Usuário';
             }
 
             if (email && displayEmailElement) {
                 displayEmailElement.textContent = email;
             } else if (displayEmailElement) {
-                 displayEmailElement.textContent = 'Não informado'; 
+                 displayEmailElement.textContent = 'Não informado';
             }
 
             if (dataCadastroStr && displayDesdeElement) {
@@ -138,7 +140,11 @@
                     displayDesdeElement.textContent = 'N/A';
                 }
             } else if (displayDesdeElement) {
-                 displayDesdeElement.textContent = 'N/A'; 
+                 displayDesdeElement.textContent = 'N/A';
+            }
+
+            if (editButtonElement && userRole === 'aluno') {
+                editButtonElement.style.display = 'none';
             }
         });
     </script>

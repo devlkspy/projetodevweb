@@ -18,7 +18,7 @@ const userSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ['aluno', 'admin'],
+        enum: ['aluno', 'assistente', 'admin'],
         default: 'aluno'
     },
     dataCadastro: {
