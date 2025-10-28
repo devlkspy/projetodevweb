@@ -91,12 +91,11 @@ footer {
 
 #toggle-password {
     position: absolute;
-    left: 250px;
-    top: 15%;
+    left: 220px;
+    top: 17%;
     transform: translateY(-50%);
     cursor: pointer;
     transform: scale(0.8);
 }
-
 
 
