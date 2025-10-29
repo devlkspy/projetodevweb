@@ -31,7 +31,7 @@
         <p>&copy; 2025 - Todos os direitos reservados.</p>
     </footer>
 </body>
-<script src="script.js"></script>
+
 <script>
     const togglePassword = document.querySelector('#toggle-password');
     const passwordInput = document.querySelector('#password-input');
@@ -81,13 +81,14 @@
 
                 const resultado = await response.json();
                 console.log('Dados recebidos do backend no login:', resultado);
-                console.log('Resultado JSON do servidor:', resultado);
 
                 if (response.ok && resultado.status === 'sucesso') {
+                    localStorage.setItem('userId', resultado.userId);
                     localStorage.setItem('nomeUsuario', resultado.nomeUsuario);
                     localStorage.setItem('emailUsuario', resultado.emailUsuario);
                     localStorage.setItem('dataCadastroUsuario', resultado.dataCadastroUsuario);
                     localStorage.setItem('roleUsuario', resultado.roleUsuario);
+                    localStorage.setItem('fotoUrlUsuario', resultado.fotoUrlUsuario);
                     
                     alert(resultado.mensagem);
                     window.location.href = 'perfil.html';

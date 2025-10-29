@@ -3,7 +3,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const app = express();
-
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -24,7 +23,7 @@ mongoose.connect(dbURI)
     })
     .catch((err) => {
         console.error('ERRO CRÍTICO ao conectar no MongoDB:', err);
-        process.exit(1); 
+        process.exit(1);
     });
 
 app.get('/', (req, res) => {
@@ -73,9 +72,12 @@ app.post('/login', async (req, res) => {
         res.status(200).json({
             status: 'sucesso',
             mensagem: 'Login bem-sucedido!',
+            userId: usuario._id,
             nomeUsuario: usuario.nome,
             emailUsuario: usuario.email,
-            dataCadastroUsuario: usuario.dataCadastro
+            dataCadastroUsuario: usuario.dataCadastro,
+            roleUsuario: usuario.role,
+            fotoUrlUsuario: usuario.fotoUrl
         });
 
     } catch (error) {
@@ -84,3 +86,35 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.patch('/perfil/:id', async (req, res) => {
+    console.log('Recebida requisição PATCH /perfil');
+    try {
+        const userId = req.params.id;
+        const { nome } = req.body;
+
+        if (!nome) {
+            return res.status(400).json({ status: 'erro', mensagem: 'O campo nome é obrigatório.' });
+        }
+
+        const usuarioAtualizado = await User.findByIdAndUpdate(
+            userId,
+            { nome: nome },
+            { new: true }
+        );
+
+        if (!usuarioAtualizado) {
+            return res.status(404).json({ status: 'erro', mensagem: 'Usuário não encontrado.' });
+        }
+
+        console.log('Perfil atualizado com sucesso para:', usuarioAtualizado.email);
+        res.status(200).json({ 
+            status: 'sucesso', 
+            mensagem: 'Perfil atualizado com sucesso!',
+            nomeUsuario: usuarioAtualizado.nome
+        });
+
+    } catch (error) {
+        console.error('Erro ao atualizar perfil:', error);
+        res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao atualizar perfil.' });
+    }
+});

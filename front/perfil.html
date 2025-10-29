@@ -40,6 +40,7 @@
     </main>
 
     <script src="script.js"></script>
+
     <script>
         const editButton = document.querySelector('#editButton');
         const displayName = document.querySelector('#displayName');
@@ -50,10 +51,11 @@
 
         let isEditing = false;
         let inputElement = null;
-        let originalImageSrc = profileImage ? profileImage.src : '';
 
         if(editButton && displayName && profileImage && fileUpload && editPhotoLabel && profileContainer) {
-            editButton.addEventListener('click', function() {
+            
+            editButton.addEventListener('click', async function() {
+                
                 if (isEditing === false) {
                     profileContainer.classList.add('edit-mode-active');
                     const nomeAtual = displayName.textContent;
@@ -69,20 +71,63 @@
                     
                     editButton.textContent = 'Salvar';
                     isEditing = true;
-                } else {
-                    profileContainer.classList.remove('edit-mode-active');
-                    const novoNome = inputElement.value;
 
-                    if (novoNome.trim() !== "") {
-                        displayName.textContent = novoNome;
+                } else {
+                    
+                    const novoNome = inputElement.value.trim();
+                    const fotoFile = fileUpload.files[0]; 
+
+                    if (novoNome === "") {
+                        alert("O nome não pode ficar em branco.");
+                        inputElement.focus();
+                        return;
                     }
 
-                    displayName.style.display = 'block';
-                    inputElement.remove();
+                    const formData = new FormData();
+                    formData.append('nome', novoNome);
                     
-                    editButton.textContent = 'Editar Perfil';
-                    isEditing = false;
-                    originalImageSrc = profileImage.src;
+                    if (fotoFile) {
+                        formData.append('foto', fotoFile);
+                    }
+
+                    try {
+                        const response = await fetch('/atualizar-perfil', {
+                            method: 'POST',
+                            body: formData 
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Falha na resposta do servidor. Status: ' + response.status);
+                        }
+
+                        const result = await response.json(); 
+
+                        if (result.success) {
+                            displayName.textContent = result.nome;
+                            
+                            if(result.fotoUrl) {
+                                profileImage.src = result.fotoUrl;
+                            }
+                            
+                            localStorage.setItem('nomeUsuario', result.nome);
+                            
+                            alert('Perfil atualizado com sucesso!');
+
+                            profileContainer.classList.remove('edit-mode-active');
+                            displayName.style.display = 'block';
+                            if(inputElement) inputElement.remove();
+                            editButton.textContent = 'Editar Perfil';
+                            isEditing = false;
+                            fileUpload.value = null;
+
+                        } else {
+                            alert('Erro ao salvar: ' + result.message);
+                        }
+
+                    } catch (error) {
+                        console.error('Erro ao enviar o formulário:', error);
+                        alert('Erro de conexão. Não foi possível salvar as alterações.');
+                    }
                 }
             });
 
@@ -95,11 +140,13 @@
                     reader.readAsDataURL(this.files[0]);
                 }
             });
+
         } else {
             console.error("Um ou mais elementos para edição do perfil não foram encontrados.");
         }
 
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const nomeCompleto = localStorage.getItem('nomeUsuario');

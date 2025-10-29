@@ -84,11 +84,13 @@
                                 <option value="noite">Noite</option>
                             </select>
                         </div>
-                         <div class="form-group">
-                            <label for="matricula">Matrícula</label>
-                            <input type="text" id="matricula" placeholder="Digite a matrícula" required>
-                        </div>
+                <div class="form-group">
+                    <label for="matricula">Matrícula</label>
+                    <div class="matricula-field-container">
+                        <input type="text" id="matricula" placeholder="Preencha o CPF e clique em Gerar..." readonly required>
+                        <button type="button" id="generateMatriculaBtn" class="btn-secondary">Gerar</button>
                     </div>
+                </div>
                     <div class="form-group">
                     <label>Modalidade</label>
                     <div class="radio-group">
@@ -170,7 +172,7 @@
                 event.preventDefault();
                 console.log('Evento submit do formulário disparado!');
 
-                const nomeInput = document.getElementById('fullName'); // Pega o campo nome
+                const nomeInput = document.getElementById('fullName');
                 const emailInput = document.getElementById('email');
                 const passwordInput = document.getElementById('generatedPassword');
                 const roleInput = document.querySelector('input[name="role"]:checked');
@@ -181,7 +183,7 @@
                     return;
                 }
 
-                const nome = nomeInput.value; // Pega o valor do nome
+                const nome = nomeInput.value;
                 const email = emailInput.value;
                 const senha = passwordInput.value;
                 const role = roleInput.value;
@@ -193,7 +195,7 @@
 
 
                 const dados = {
-                    nome: nome, // Inclui o nome nos dados enviados
+                    nome: nome,
                     email: email,
                     senha: senha,
                     role: role
@@ -230,9 +232,10 @@
         function toggleStudentFields() {
              console.log('Alternando visibilidade dos campos de aluno');
              const isAdminChecked = document.getElementById('role-admin').checked;
+             const isAssistantChecked = document.getElementById('role-assistant').checked;
             
             if (studentFieldsDiv) {
-                if (isAdminChecked) {
+                if (isAdminChecked || isAssistantChecked) {
                     studentFieldsDiv.style.display = 'none';
                     const fieldsToDisable = studentFieldsDiv.querySelectorAll('input, select');
                     fieldsToDisable.forEach(field => field.disabled = true);
@@ -253,12 +256,36 @@
         } else {
              console.warn('Aviso: Elementos para esconder/mostrar campos de aluno não encontrados.');
         }
-    });
-    const userRole = localStorage.getItem('roleUsuario');
-        if (userRole === 'aluno') {
+
+        const userRoleCheck = localStorage.getItem('roleUsuario');
+        if (userRoleCheck === 'aluno') {
             alert('Acesso negado. Alunos não podem cadastrar novos usuários.');
             window.location.href = 'perfil.html';
         }
+
+        const generateMatriculaBtn = document.getElementById('generateMatriculaBtn');
+        const matriculaField = document.getElementById('matricula');
+
+        if (generateMatriculaBtn && cpfField && matriculaField) {
+            generateMatriculaBtn.addEventListener('click', function() {
+                const cpfValue = cpfField.value.replace(/\D/g, '');
+
+                if (cpfValue.length < 6) {
+                    alert('Por favor, preencha o CPF primeiro (pelo menos 6 dígitos).');
+                    cpfField.focus();
+                    return;
+                }
+                
+                const anoAtual = new Date().getFullYear();
+                const parteDoCpf = cpfValue.substring(0, 6);
+                const matriculaGerada = `${anoAtual}-${parteDoCpf}`;
+                
+                matriculaField.value = matriculaGerada;
+            });
+        } else {
+            console.error('Erro: Elementos para gerar matrícula não encontrados!');
+        }
+    });
 </script>
     
 </body>

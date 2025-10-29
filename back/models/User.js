@@ -24,6 +24,10 @@ const userSchema = new Schema({
     dataCadastro: {
         type: Date,
         default: Date.now
+    },
+    fotoUrl: {
+        type: String,
+        default: 'https://placehold.co/150x150'
     }
 });
 
