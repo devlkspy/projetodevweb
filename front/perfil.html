@@ -75,7 +75,13 @@
                 } else {
                     
                     const novoNome = inputElement.value.trim();
-                    const fotoFile = fileUpload.files[0]; 
+                    const fotoFile = fileUpload.files[0];
+                    const userId = localStorage.getItem('userId');
+
+                    if (!userId) {
+                        alert('Erro: ID do usuário não encontrado. Faça login novamente.');
+                        return;
+                    }
 
                     if (novoNome === "") {
                         alert("O nome não pode ficar em branco.");
@@ -91,9 +97,11 @@
                     }
 
                     try {
-                        const response = await fetch('/atualizar-perfil', {
+                        const url = `https://projetodevweb.onrender.com/atualizar-perfil/${userId}/`;
+                        
+                        const response = await fetch(url, {
                             method: 'POST',
-                            body: formData 
+                            body: formData,
                         });
 
                         if (!response.ok) {
@@ -102,7 +110,7 @@
 
                         const result = await response.json(); 
 
-                        if (result.success) {
+                        if (result.status === 'sucesso') {
                             displayName.textContent = result.nome;
                             
                             if(result.fotoUrl) {
@@ -110,6 +118,7 @@
                             }
                             
                             localStorage.setItem('nomeUsuario', result.nome);
+                            localStorage.setItem('fotoUrlUsuario', result.fotoUrl);
                             
                             alert('Perfil atualizado com sucesso!');
 
@@ -121,7 +130,7 @@
                             fileUpload.value = null;
 
                         } else {
-                            alert('Erro ao salvar: ' + result.message);
+                            alert('Erro ao salvar: ' + result.mensagem);
                         }
 
                     } catch (error) {
@@ -144,20 +153,21 @@
         } else {
             console.error("Um ou mais elementos para edição do perfil não foram encontrados.");
         }
-
     </script>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const nomeCompleto = localStorage.getItem('nomeUsuario');
             const email = localStorage.getItem('emailUsuario');
             const dataCadastroStr = localStorage.getItem('dataCadastroUsuario');
             const userRole = localStorage.getItem('roleUsuario');
+            const fotoUrl = localStorage.getItem('fotoUrlUsuario');
 
             const displayNameElement = document.getElementById('displayName');
             const displayEmailElement = document.getElementById('displayEmail');
             const displayDesdeElement = document.getElementById('displayDesde');
             const editButtonElement = document.getElementById('editButton');
+            const profileImageElement = document.getElementById('profileImage');
 
             if (nomeCompleto && displayNameElement) {
                 const nomes = nomeCompleto.split(' ');
@@ -165,6 +175,10 @@
                 displayNameElement.textContent = doisPrimeirosNomes;
             } else if (displayNameElement) {
                  displayNameElement.textContent = 'Usuário';
+            }
+            
+            if (fotoUrl && fotoUrl !== 'null' && fotoUrl !== 'undefined' && profileImageElement) {
+                profileImageElement.src = fotoUrl;
             }
 
             if (email && displayEmailElement) {
@@ -197,3 +211,4 @@
     </script>
 </body>
 </html>
+
