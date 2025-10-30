@@ -2,9 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const multer = require('multer');
-const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const User = require('./models/User'); 
+const cloudinary = require('cloudinary').v2;
+const User = require('./models/User');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,9 +14,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json()); 
-
-const dbURI = process.env.DATABASE_URL;
+app.use(express.json());
 
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
@@ -27,13 +25,15 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'perfis_usuarios',
-    format: async (req, file) => 'jpg',
-    public_id: (req, file) => `perfil-${req.params.id}-${Date.now()}`,
+    folder: 'perfis_devweb',
+    allowed_formats: ['jpg', 'png', 'jpeg'],
+    transformation: [{ width: 200, height: 200, crop: 'fill' }]
   },
 });
 
 const upload = multer({ storage: storage });
+
+const dbURI = process.env.DATABASE_URL;
 
 console.log('Tentando conectar ao MongoDB...');
 mongoose.connect(dbURI)
@@ -49,17 +49,29 @@ mongoose.connect(dbURI)
     });
 
 app.get('/', (req, res) => {
-    res.send('Olá! Este é o seu servidor backend Node.js respondendo.');
+    res.send('Olá! Este é o seu servidor backend respondendo.');
 });
 
 app.post('/cadastrar', async (req, res) => {
     console.log('Recebida requisição POST /cadastrar');
     try {
-        const { nome, email, senha, role } = req.body;
-        const novoUsuario = new User({ nome, email, senha, role });
+        const { 
+            nome, email, senha, role, 
+            matricula, curso, turno, modalidade 
+        } = req.body;
+        
+        console.log('Dados recebidos para cadastro:', { nome, email, role, curso });
+
+        const novoUsuario = new User({ 
+            nome, email, senha, role, 
+            matricula, curso, turno, modalidade 
+        });
+        
         await novoUsuario.save();
         console.log('Novo usuário salvo com sucesso:', email);
+
         res.status(201).json({ status: 'sucesso', mensagem: 'Usuário cadastrado com sucesso!' });
+
     } catch (error) {
         console.error('Erro detalhado ao cadastrar usuário:', error);
         if (error.code === 11000) {
@@ -74,13 +86,18 @@ app.post('/login', async (req, res) => {
     console.log('Recebida requisição POST /login');
     try {
         const { email, senha } = req.body;
+        console.log('Tentativa de login para:', email);
+
         const usuario = await User.findOne({ email: email });
+        console.log('Usuário encontrado no BD:', usuario ? usuario.email : 'Nenhum');
+
         if (!usuario) {
             return res.status(404).json({ status: 'erro', mensagem: 'Email não encontrado.' });
         }
         if (usuario.senha !== senha) {
             return res.status(401).json({ status: 'erro', mensagem: 'Senha incorreta.' });
         }
+
         console.log('Login bem-sucedido para:', email);
         res.status(200).json({
             status: 'sucesso',
@@ -92,6 +109,7 @@ app.post('/login', async (req, res) => {
             roleUsuario: usuario.role,
             fotoUrlUsuario: usuario.fotoUrl
         });
+
     } catch (error) {
         console.error('Erro detalhado no login:', error);
         res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao tentar fazer login.' });
@@ -103,7 +121,7 @@ app.post('/atualizar-perfil/:id/', upload.single('foto'), async (req, res) => {
     try {
         const userId = req.params.id;
         const { nome } = req.body;
-
+        
         const usuario = await User.findById(userId);
         if (!usuario) {
             return res.status(404).json({ status: 'erro', mensagem: 'Usuário não encontrado.' });
@@ -113,20 +131,18 @@ app.post('/atualizar-perfil/:id/', upload.single('foto'), async (req, res) => {
             usuario.nome = nome;
         }
         
-        let novaFotoUrl = usuario.fotoUrl;
         if (req.file) {
-            novaFotoUrl = req.file.path;
-            usuario.fotoUrl = novaFotoUrl;
+            usuario.fotoUrl = req.file.path;
         }
-        
-        await usuario.save();
 
+        await usuario.save();
+        
         console.log('Perfil atualizado com sucesso para:', usuario.email);
         res.status(200).json({ 
             status: 'sucesso', 
             mensagem: 'Perfil atualizado com sucesso!',
             nome: usuario.nome,
-            fotoUrl: novaFotoUrl
+            fotoUrl: usuario.fotoUrl
         });
 
     } catch (error) {
@@ -135,3 +151,32 @@ app.post('/atualizar-perfil/:id/', upload.single('foto'), async (req, res) => {
     }
 });
 
+app.get('/usuarios', async (req, res) => {
+    console.log('Recebida requisição GET /usuarios');
+    try {
+        const usuarios = await User.find().select('nome email role curso matricula _id');
+        res.status(200).json(usuarios);
+    } catch (error) {
+        console.error('Erro ao buscar usuários:', error);
+        res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao buscar usuários.' });
+    }
+});
+
+app.delete('/usuarios/:id', async (req, res) => {
+    console.log('Recebida requisição DELETE /usuarios/:id');
+    try {
+        const userId = req.params.id;
+        const deletedUser = await User.findByIdAndDelete(userId);
+        
+        if (!deletedUser) {
+            return res.status(404).json({ status: 'erro', mensagem: 'Usuário não encontrado.' });
+        }
+        
+        console.log('Usuário excluído:', deletedUser.email);
+        res.status(200).json({ status: 'sucesso', mensagem: 'Usuário excluído com sucesso!' });
+
+    } catch (error) {
+        console.error('Erro ao excluir usuário:', error);
+        res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao excluir usuário.' });
+    }
+});

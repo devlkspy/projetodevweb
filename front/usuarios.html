@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Usuários</title>
+    <link rel="stylesheet" href="cabecalho.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="usuarios.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+
+    <header id="header-placeholder"></header>
+
+    <main>
+        <div class="user-container">
+            <div class="user-header">
+                <h2>Gerenciamento de Usuários</h2>
+                <p>Visualize e exclua usuários cadastrados no sistema.</p>
+            </div>
+            
+            <div class="user-list-container">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>Curso (Matrícula)</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    
+    <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const userRoleCheck = localStorage.getItem('roleUsuario');
+            if (userRoleCheck === 'aluno') {
+                alert('Acesso negado.');
+                window.location.href = 'perfil.html';
+                return;
+            }
+
+            const tableBody = document.getElementById('user-table-body');
+            const spinner = document.getElementById('loading-spinner');
+            const backendUrl = 'https://projetodevweb.onrender.com';
+
+            function formatarRole(role) {
+                if (role === 'admin') return 'Administrador';
+                if (role === 'assistente') return 'Assistente';
+                if (role === 'aluno') return 'Aluno';
+                return role;
+            }
+
+            function formatarCurso(cursoKey) {
+                const cursos = {
+                    'ads': 'Análise e Desenv. de Sistemas',
+                    'computacao': 'Ciências da Computação',
+                    'engenharia': 'Engenharia de Software',
+                    'redes': 'Redes de Computadores'
+                };
+                return cursos[cursoKey] || cursoKey;
+            }
+
+            async function carregarUsuarios() {
+                spinner.style.display = 'flex';
+                try {
+                    const response = await fetch(`${backendUrl}/usuarios`);
+                    if (!response.ok) {
+                        throw new Error('Falha ao buscar usuários: ' + response.status);
+                    }
+                    const usuarios = await response.json();
+                    
+                    tableBody.innerHTML = '';
+
+                    if (usuarios.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum usuário cadastrado.</td></tr>';
+                    }
+
+                    usuarios.forEach(user => {
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-user-id', user._id);
+                        
+                        let cursoMatricula = 'N/A';
+                        if (user.role === 'aluno' && user.curso && user.matricula) {
+                            cursoMatricula = `${formatarCurso(user.curso)} (${user.matricula})`;
+                        }
+
+                        tr.innerHTML = `
+                            <td>${user.nome}</td>
+                            <td>${user.email}</td>
+                            <td>${formatarRole(user.role)}</td>
+                            <td>${cursoMatricula}</td>
+                            <td>
+                                <button class="btn-delete" data-id="${user._id}">
+                                    <i class="fa-solid fa-trash-can"></i> Excluir
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+
+                    adicionarListenersExclusao();
+
+                } catch (error) {
+                    console.error('Erro ao carregar usuários:', error);
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Erro ao carregar usuários.</td></tr>';
+                } finally {
+                    spinner.style.display = 'none';
+                }
+            }
+
+            function adicionarListenersExclusao() {
+                const deleteButtons = document.querySelectorAll('.btn-delete');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', async function() {
+                        const userId = this.getAttribute('data-id');
+                        const userRow = this.closest('tr');
+                        const userName = userRow.cells[0].textContent;
+
+                        if (confirm(`Tem certeza que deseja excluir o usuário "${userName}"?`)) {
+                            spinner.style.display = 'flex';
+                            try {
+                                const response = await fetch(`${backendUrl}/usuarios/${userId}`, {
+                                    method: 'DELETE'
+                                });
+
+                                const result = await response.json();
+
+                                if (!response.ok) {
+                                    throw new Error(result.mensagem || 'Erro desconhecido');
+                                }
+                                
+                                alert(result.mensagem);
+                                userRow.remove();
+
+                            } catch (error) {
+                                console.error('Erro ao excluir usuário:', error);
+                                alert('Erro ao excluir usuário: ' + error.message);
+                            } finally {
+                                spinner.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            }
+
+            carregarUsuarios();
+        });
+    </script>
+</body>
+</html>
