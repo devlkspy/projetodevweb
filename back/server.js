@@ -44,7 +44,7 @@ mongoose.connect(dbURI)
         });
     })
     .catch((err) => {
-        console.error('ERRO CRÍTICO ao conectar no MongoDB:', err);
+        console.error('ERRO CRÍTICO ao conectar no MongoDB:', err.stack || err);
         process.exit(1);
     });
 
@@ -73,7 +73,7 @@ app.post('/cadastrar', async (req, res) => {
         res.status(201).json({ status: 'sucesso', mensagem: 'Usuário cadastrado com sucesso!' });
 
     } catch (error) {
-        console.error('Erro detalhado ao cadastrar usuário:', error);
+        console.error('Erro detalhado ao cadastrar usuário:', error.stack || error);
         if (error.code === 11000) {
             res.status(409).json({ status: 'erro', mensagem: 'Este email já está cadastrado.' });
         } else {
@@ -113,7 +113,7 @@ app.post('/login', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erro detalhado no login:', error);
+        console.error('Erro detalhado no login:', error.stack || error);
         res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao tentar fazer login.' });
     }
 });
@@ -148,7 +148,7 @@ app.post('/atualizar-perfil/:id/', upload.single('foto'), async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erro ao atualizar perfil:', error);
+        console.error('Erro ao atualizar perfil:', error.stack || error);
         res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao atualizar perfil.' });
     }
 });
@@ -159,7 +159,7 @@ app.get('/usuarios', async (req, res) => {
         const usuarios = await User.find().select('nome email role curso matricula _id');
         res.status(200).json(usuarios);
     } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+        console.error('Erro ao buscar usuários:', error.stack || error);
         res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao buscar usuários.' });
     }
 });
@@ -178,7 +178,7 @@ app.delete('/usuarios/:id', async (req, res) => {
         res.status(200).json({ status: 'sucesso', mensagem: 'Usuário excluído com sucesso!' });
 
     } catch (error) {
-        console.error('Erro ao excluir usuário:', error);
+        console.error('Erro ao excluir usuário:', error.stack || error);
         res.status(500).json({ status: 'erro', mensagem: 'Erro interno ao excluir usuário.' });
     }
 });
