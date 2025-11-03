@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
-const User = require('./models/User');
+const User = require('./models/user.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -107,7 +107,9 @@ app.post('/login', async (req, res) => {
             emailUsuario: usuario.email,
             dataCadastroUsuario: usuario.dataCadastro,
             roleUsuario: usuario.role,
-            fotoUrlUsuario: usuario.fotoUrl
+            fotoUrlUsuario: usuario.fotoUrl,
+            matriculaUsuario: usuario.matricula, 
+            cursoUsuario: usuario.curso 
         });
 
     } catch (error) {

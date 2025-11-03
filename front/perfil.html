@@ -29,8 +29,13 @@
             <div class="profile-details">
                 <h3>Detalhes do Perfil</h3>
                 <p><strong>Email:</strong> <span id="displayEmail">email@placeholder.com</span></p>
-                <p><strong>Matrícula:</strong> 2015-049567</p>
-                <p><strong>Departamento:</strong> Análise e Desenvolvimento de Sistemas</p>
+                
+                <div id="student-profile-fields" style="display: none;">
+                    <p><strong>Matrícula:</strong> <span id="displayMatricula"></span></p>
+                    <p><strong>Curso:</strong> <span id="displayCurso"></span></p>
+                </div>
+                
+                <p><strong>Departamento:</strong> <span id="displayRole"></span></p>
                 <p><strong>Desde:</strong> <span id="displayDesde">ANO</span></p>
             </div>
             <div class="profile-actions">
@@ -157,17 +162,38 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            
+            function formatarRole(role) {
+                if (role === 'admin') return 'Administrador';
+                if (role === 'assistente') return 'Assistente';
+                if (role === 'aluno') return 'Aluno';
+                return role || 'Não informado';
+            }
+
+            function formatarCurso(cursoKey) {
+                const cursos = {
+                    'ads': 'Análise e Desenv. de Sistemas',
+                    'computacao': 'Ciências da Computação',
+                    'engenharia': 'Engenharia de Software',
+                    'redes': 'Redes de Computadores'
+                };
+                return cursos[cursoKey] || cursoKey || 'Não informado';
+            }
+
             const nomeCompleto = localStorage.getItem('nomeUsuario');
             const email = localStorage.getItem('emailUsuario');
             const dataCadastroStr = localStorage.getItem('dataCadastroUsuario');
             const userRole = localStorage.getItem('roleUsuario');
             const fotoUrl = localStorage.getItem('fotoUrlUsuario');
+            const matricula = localStorage.getItem('matriculaUsuario');
+            const curso = localStorage.getItem('cursoUsuario');
 
             const displayNameElement = document.getElementById('displayName');
             const displayEmailElement = document.getElementById('displayEmail');
             const displayDesdeElement = document.getElementById('displayDesde');
             const editButtonElement = document.getElementById('editButton');
             const profileImageElement = document.getElementById('profileImage');
+            const displayRoleElement = document.getElementById('displayRole');
 
             if (nomeCompleto && displayNameElement) {
                 const nomes = nomeCompleto.split(' ');
@@ -186,6 +212,22 @@
             } else if (displayEmailElement) {
                  displayEmailElement.textContent = 'Não informado';
             }
+            
+            if (displayRoleElement) {
+                displayRoleElement.textContent = formatarRole(userRole);
+            }
+
+            if (userRole === 'aluno') {
+                const studentFieldsDiv = document.getElementById('student-profile-fields');
+                const displayMatriculaElement = document.getElementById('displayMatricula');
+                const displayCursoElement = document.getElementById('displayCurso');
+                
+                if (studentFieldsDiv && displayMatriculaElement && displayCursoElement) {
+                    displayMatriculaElement.textContent = matricula || 'Não informada';
+                    displayCursoElement.textContent = formatarCurso(curso);
+                    studentFieldsDiv.style.display = 'block';
+                }
+            }
 
             if (dataCadastroStr && displayDesdeElement) {
                 try {
@@ -203,12 +245,7 @@
             } else if (displayDesdeElement) {
                  displayDesdeElement.textContent = 'N/A';
             }
-
-            if (editButtonElement && userRole === 'aluno') {
-                editButtonElement.style.display = 'none';
-            }
         });
     </script>
 </body>
 </html>
-

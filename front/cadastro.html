@@ -143,16 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneField = document.getElementById('phone');
     const birthDateField = document.getElementById('birthDate');
 
-    if (birthDateField) {
-        const maxDate = new Date();
-        maxDate.setFullYear(maxDate.getFullYear() - 15);
-        const year = maxDate.getFullYear();
-        const month = (maxDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = maxDate.getDate().toString().padStart(2, '0');
-        const maxDateString = `${year}-${month}-${day}`;
-        birthDateField.setAttribute('max', maxDateString);
-    }
-
     if(cpfField) {
         cpfField.addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
