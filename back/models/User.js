@@ -28,7 +28,12 @@ const userSchema = new Schema({
     fotoUrl: {
         type: String,
         default: 'https://placehold.co/150x150'
-    }
+    },
+    
+    matricula: { type: String, sparse: true },
+    curso: { type: String },
+    turno: { type: String },
+    modalidade: { type: String }
 });
 
 const User = mongoose.model('User', userSchema);
