@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
-const User = require('./models/user.js');
+const User = require('./models/User.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
