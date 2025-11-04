@@ -212,6 +212,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            const emailValue = emailInput.value;
+            const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+            if (!emailRegex.test(emailValue)) {
+                alert('Formato de e-mail inválido. Verifique o email digitado (ex: usuario@dominio.com).');
+                emailInput.focus();
+                return;
+            }
+
             if (birthDateInput) {
                 const birthDateValue = new Date(birthDateInput.value);
                 const today = new Date();
