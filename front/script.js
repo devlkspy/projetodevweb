@@ -14,11 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const nomeCompleto = localStorage.getItem('nomeUsuario');
-            const roleUsuario = localStorage.getItem('roleUsuario');
-            
             const elementoLogo = document.querySelector('.logo'); 
-            const linkCadastro = document.getElementById('link-cadastro');
-            const linkUsuarios = document.getElementById('link-usuarios');
 
             if (elementoLogo && nomeCompleto) {
                 const primeiroNome = nomeCompleto.split(' ')[0];
@@ -26,16 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (elementoLogo) {
                 elementoLogo.textContent = 'Bem vindo';
             }
+            
+            const userRole = localStorage.getItem('roleUsuario');
+            const linkCadastro = document.getElementById('link-cadastro');
+            const linkUsuarios = document.getElementById('link-usuarios');
 
-            if (roleUsuario === 'aluno') {
-                if (linkCadastro) {
-                    linkCadastro.style.display = 'none';
-                }
-                if (linkUsuarios) {
-                    linkUsuarios.style.display = 'none';
-                }
+            if (userRole === 'aluno') {
+                if (linkCadastro) linkCadastro.style.display = 'none';
+                if (linkUsuarios) linkUsuarios.style.display = 'none';
             }
             
+            if (userRole === 'assistente') {
+                if (linkUsuarios) linkUsuarios.style.display = 'none';
+            }
         })
         .catch(error => console.error('Erro ao processar o cabeçalho:', error));
 
