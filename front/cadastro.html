@@ -359,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userRoleCheck = localStorage.getItem('roleUsuario');
     if (userRoleCheck === 'aluno') {
         alert('Acesso negado. Alunos não podem cadastrar novos usuários.');
-        window.location.href = 'perfil.html';
+        window.location.href = '/perfil';
     }
     
     if (userRoleCheck === 'assistente') {
