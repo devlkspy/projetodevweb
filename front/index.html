@@ -23,7 +23,7 @@
                 <button type="submit">Entrar</button>
             </form>
             <p>
-                Esqueceu a senha? <a href="esqueceu.html">Clique aqui</a>
+                Esqueceu a senha? <a href="/esqueceu-a-senha">Clique aqui</a>
             </p>
         </div>
     </main>
@@ -94,7 +94,7 @@
                     localStorage.setItem('cursoUsuario', resultado.cursoUsuario);
                     
                     alert(resultado.mensagem);
-                    window.location.href = 'perfil.html';
+                    window.location.href = '/perfil';
                 } else {
                     alert(`Erro no login: ${resultado.mensagem}`);
                 }
