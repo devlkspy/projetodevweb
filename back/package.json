@@ -1,17 +1,8 @@
 {
-  "name": "back",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "mongoose": "^7.8.7"
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0"
   }
 }
