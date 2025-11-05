@@ -18,6 +18,7 @@
         <div class="form-container">
             <div class="form-header">
                 <h2>Área de cadastro</h2>
+                <p>Preencha os dados abaixo para registrar um aluno/administrador no sistema.</p>
             </div>
             <form class="registration-form" id="cadastro-form">
                 <div class="form-group">
@@ -358,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const userRoleCheck = localStorage.getItem('roleUsuario');
     if (userRoleCheck === 'aluno') {
         alert('Acesso negado. Alunos não podem cadastrar novos usuários.');
-        window.location.href = '/perfil';
+        window.location.href = 'perfil.html';
     }
     
     if (userRoleCheck === 'assistente') {
