@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: 'https://SUA_URL_DA_VERCEL_AQUI.vercel.app'
+  origin: 'https://projetodevweb-iota.vercel.app/'
 };
 
 app.use(cors(corsOptions));
